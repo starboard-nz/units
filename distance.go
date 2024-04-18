@@ -8,6 +8,8 @@ package units
 
 import (
 	"math"
+	"strconv"
+	"strings"
 )
 
 // Distance represents a quantity of length.
@@ -74,4 +76,44 @@ func (d Distance) Miles() float64 {
 // Feet returns the Distance d in feet
 func (d Distance) Feet() float64 {
 	return float64(d / Foot)
+}
+
+func ParseDistance(dist string) (Distance, error) {
+	tokens := strings.Fields(dist)
+	if len(tokens) == 1 {
+		tokens = []string{
+			strings.TrimRightFunc(tokens[0], func(r rune) bool {
+				return r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z' || r == '"' || r == '\''
+			}),
+			strings.TrimLeftFunc(tokens[0], func(r rune) bool {
+				return r >= '0' && r <= '9' || r == '-' || r == '.'
+			}),
+		}
+	}
+
+	if len(tokens) != 2 {
+		return 0, ErrParse
+	}
+
+	val, err := strconv.ParseFloat(tokens[0], 64)
+	if err != nil {
+		return 0, err
+	}
+
+	switch tokens[1] {
+	case "m":
+		return Distance(val), nil
+	case "NM":
+		return Distance(val) * NauticalMile, nil
+	case "mile", "miles":
+		return Distance(val) * Mile, nil
+	case "km":
+		return Distance(val) * Kilometer, nil
+	case "ft", "'":
+		return Distance(val) * Foot, nil
+	case "in", "inch", "\"":
+		return Distance(val) * Inch, nil
+	default:
+		return 0, ErrUnknownUnit
+	}
 }
