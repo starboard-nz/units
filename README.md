@@ -1,6 +1,6 @@
 Standard units for Go.
 
-## Supported unit
+## Supported units
 
 Currently supported:
  * Distance
