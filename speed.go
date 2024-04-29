@@ -7,55 +7,34 @@ package units
  */
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
 
 // Speed represents a quantity of speed.
-// Internally, it stores the speed in m/s, as a float64.
-// Create a new Speed by multiplying one of the constants:
-// d1 := 100 * units.Kn
-// d2 := 10 * units.Kph
-// Use methods like Knots() or Ki() to get the distance in the unit of your choice.
-// US and UK spelling of consts and methods supported.
-// Use Metres() or Kilometres() to get the distance in the unit of your choice.
-// If you prefer imperial units, use NauticalMiles() Miles() or Feet().
-// US and UK spelling supported.
-// Create a new Distance by multiplying one of the constants:
-// d := 10 * units.Metre
+type Speed interface {
+	Unit
+	// Knots returns the speed in knots
+	Knot() Knot
+	// Kphs returns the speed in kilometers per hour.
+	Kph() Kph
+	// Mps returns the speed in metres per second
+	Mps() Mps
+	// Mph returns the speed in miles per hour
+	Mph() Mph
+}
 
-type Speed float64
-
-const (
-	Mps  Speed = 1
-	Kn   Speed = Speed(float64(NauticalMile) / 3600)
-	Knot Speed = Speed(float64(NauticalMile) / 3600)
-	Kph  Speed = Speed(float64(Kilometre) / 3600)
-	Mph  Speed = Speed(float64(Mile) / 3600)
+type (
+	Knot float64
+	Kph  float64
+	Mps  float64
+	Mph  float64
 )
 
-// Valid returns true if the speed is valid. Invalid distances may be returned by
-// functions when the result cannot be calculated.
-func (s Speed) Valid() bool {
-	return !math.IsNaN(float64(s))
-}
-
-// Kphs returns the speed in kilometres per hour.
-func (s Speed) Kphs() float64 {
-	return float64(s) * 3600 / float64(Kilometre)
-}
-
-// Kns returns the speed in Knots.
-func (s Speed) Kns() float64 {
-	return float64(s) * 3600 / float64(NauticalMile)
-}
-
-// Mpss return the speed in m/s.
-func (s Speed) Mpss() float64 {
-	return float64(s)
-}
-
+// ParseSpeed parses a string that contains a speed and a commonly used unit abbreviation
+// and returns it as a distance unit.
 func ParseSpeed(sp string) (Speed, error) {
 	tokens := strings.Fields(sp)
 	if len(tokens) == 1 {
@@ -70,24 +49,158 @@ func ParseSpeed(sp string) (Speed, error) {
 	}
 
 	if len(tokens) != 2 {
-		return 0, ErrParse
+		return Mps(0), ErrParse
 	}
 
 	val, err := strconv.ParseFloat(tokens[0], 64)
 	if err != nil {
-		return 0, err
+		return Mps(0), err
 	}
 
 	switch tokens[1] {
 	case "m/s":
-		return Speed(val), nil
+		return Mps(val), nil
 	case "kn":
-		return Speed(val) * Knot, nil
+		return Knot(val), nil
 	case "km/h":
-		return Speed(val) * Kph, nil
-	case "mph":
-		return Speed(val) * Mph, nil
+		return Kph(val), nil
+	case "mph", "mi/h":
+		return Mph(val), nil
 	default:
-		return 0, ErrUnknownUnit
+		return Mps(0), ErrUnknownUnit
 	}
+}
+
+// Knots
+func (k Knot) Name() string {
+	return "knots"
+}
+
+func (k Knot) Short() string {
+	return "kn"
+}
+
+func (k Knot) String() string {
+	return fmt.Sprintf("%f kn", k)
+}
+
+func (k Knot) Valid() bool {
+	return !math.IsNaN(float64(k))
+}
+
+func (k Knot) Kph() Kph {
+	return Kph(float64(k) * float64(NauticalMileInMetres) / 1000)
+}
+
+func (k Knot) Knot() Knot {
+	return k
+}
+
+func (k Knot) Mps() Mps {
+	return Mps(float64(k) * float64(NauticalMileInMetres) / 3600)
+}
+
+func (k Knot) Mph() Mph {
+	return Mph(float64(k) * float64(NauticalMileInMetres) / float64(MileInMetres))
+}
+
+// km/h
+func (k Kph) Name() string {
+	// FIXME: should return spelling according to locale
+	return "Kilometres per hour"
+}
+
+func (k Kph) Short() string {
+	return "km/h"
+}
+
+func (k Kph) String() string {
+	return fmt.Sprintf("%f km/h", k)
+}
+
+func (k Kph) Valid() bool {
+	return !math.IsNaN(float64(k))
+}
+
+func (k Kph) Kph() Kph {
+	return k
+}
+
+func (k Kph) Knot() Knot {
+	return Knot(float64(k) * 1000 / float64(NauticalMileInMetres))
+}
+
+func (k Kph) Mps() Mps {
+	return Mps(k / 3.6)
+}
+
+func (k Kph) Mph() Mph {
+	return Mph(float64(k) * 1000 / float64(MileInMetres))
+}
+
+// m/s
+func (m Mps) Name() string {
+	// FIXME: should return spelling according to locale
+	return "metres per second"
+}
+
+func (m Mps) Short() string {
+	return "m/s"
+}
+
+func (m Mps) String() string {
+	return fmt.Sprintf("%f km/h", m)
+}
+
+func (m Mps) Valid() bool {
+	return !math.IsNaN(float64(m))
+}
+
+func (m Mps) Kph() Kph {
+	return Kph(m * 3.6)
+}
+
+func (m Mps) Knot() Knot {
+	return Knot(float64(m) * 3600 / float64(NauticalMileInMetres))
+}
+
+func (m Mps) Mps() Mps {
+	return m
+}
+
+func (m Mps) Mph() Mph {
+	return Mph(float64(m) * 3600 / float64(MileInMetres))
+}
+
+// mph (mi/h)
+func (m Mph) Name() string {
+	return "miles per hour"
+}
+
+func (m Mph) Short() string {
+	return "mph"
+}
+
+func (m Mph) String() string {
+	return fmt.Sprintf("%f mph", m)
+}
+
+func (m Mph) Valid() bool {
+	return !math.IsNaN(float64(m))
+}
+
+func (m Mph) Kph() Kph {
+	return Kph(float64(m) * float64(MileInMetres) / 1000)
+}
+
+func (m Mph) Knot() Knot {
+	return Knot(float64(m) * float64(MileInMetres) / float64(NauticalMileInMetres))
+}
+
+func (m Mph) Mps() Mps {
+	return Mps(float64(m) * float64(MileInMetres) / 3600)
+}
+
+func (m Mph) Mph() Mph {
+	return m
 }
