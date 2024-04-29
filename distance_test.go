@@ -129,3 +129,33 @@ func TestDistanceRandom(t *testing.T) {
 		assert.InDelta(t, float64(d0.Mile()), float64(d.Mile()), δ)		
 	}
 }
+
+func TestDistanceString(t *testing.T) {
+	var testData = map[units.Distance]string{
+		units.Metre(-10.4): "-10.40 m",
+		units.Km(120): "120.00 km",
+		units.Mile(23.6): "23.60 mi",
+		units.Meter(0.5): "0.50 m",
+		units.NM(79.3): "79.30 NM",
+	}
+
+	for d, exp := range testData {
+		str := fmt.Sprintf("%v", d)
+		assert.Equal(t, exp, str)
+	}
+}
+
+func TestDistanceShort(t *testing.T) {
+	var testData = map[units.Distance]string{
+		units.Metre(-10.4): "-10 m",
+		units.Km(120): "120 km",
+		units.Mile(23.6): "24 mi",
+		units.Meter(0.5): "0 m",
+		units.NM(79.3): "79 NM",
+	}
+
+	for d, exp := range testData {
+		str := fmt.Sprintf("%.0f %s", d, d.Short())
+		assert.Equal(t, exp, str)
+	}
+}

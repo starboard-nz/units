@@ -98,7 +98,7 @@ func (m Metre) Short() string {
 }
 
 func (m Metre) String() string {
-	return fmt.Sprintf("%f m", m)
+	return fmt.Sprintf("%.2f m", m)
 }
 
 func (m Metre) Valid() bool {
@@ -136,7 +136,7 @@ func (m Meter) Short() string {
 }
 
 func (m Meter) String() string {
-	return fmt.Sprintf("%f m", m)
+	return fmt.Sprintf("%.2f m", m)
 }
 
 func (m Meter) Valid() bool {
@@ -174,7 +174,7 @@ func (k Km) Short() string {
 }
 
 func (k Km) String() string {
-	return fmt.Sprintf("%f km", k)
+	return fmt.Sprintf("%.2f km", k)
 }
 
 func (k Km) Valid() bool {
@@ -212,7 +212,7 @@ func (m NM) Short() string {
 }
 
 func (m NM) String() string {
-	return fmt.Sprintf("%f NM", m)
+	return fmt.Sprintf("%.2f NM", m)
 }
 
 func (m NM) Valid() bool {
@@ -250,7 +250,7 @@ func (m Mile) Short() string {
 }
 
 func (m Mile) String() string {
-	return fmt.Sprintf("%f mi", m)
+	return fmt.Sprintf("%.2f mi", m)
 }
 
 func (m Mile) Valid() bool {
