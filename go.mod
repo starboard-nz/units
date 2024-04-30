@@ -1,6 +1,6 @@
 module github.com/starboard-nz/units
 
-go 1.22.0
+go 1.21
 
 require github.com/stretchr/testify v1.9.0
 
