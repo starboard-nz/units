@@ -27,10 +27,10 @@ type Speed interface {
 }
 
 type (
-	Knot float64
-	Kph  float64
-	Mps  float64
-	Mph  float64
+	Knot float64 // kn
+	Kph  float64 // km/h
+	Mps  float64 // m/s
+	Mph  float64 // mi/h
 )
 
 // ParseSpeed parses a string that contains a speed and a commonly used unit abbreviation
