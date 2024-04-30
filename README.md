@@ -40,10 +40,12 @@ d := units.NM(d0)
 
 Print a distance:
 
+```
 d := units.Km(25)
 fmt.Printf("%v", d) // prints "25.00 km"
 fmt.Printf("%v", d.Metre()) // prints "25000.00 km"
 fmt.Printf("%.0f %s", d, d.Short()) // prints "25 km"
+```
 
 ### Speed:
 
@@ -77,6 +79,8 @@ if err != nil {
 
 Print a speed:
 
+```
 s := units.Mps(25.1234)
 fmt.Printf("%v", s) // prints "25.12 m/s"
 fmt.Printf("%.0f %s", s, s.Short()) // prints "25 m/s"
+```
