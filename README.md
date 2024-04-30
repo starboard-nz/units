@@ -17,8 +17,8 @@ import (
 
 ...
 
-d := 10 * units.NauticalMile
-kms := d.Kilometres()
+d := units.NM(10)
+kms := d.Km()
 
 ```
 
@@ -31,12 +31,19 @@ if err != nil {
 }
 ```
 
-Using a variable that stores a distance in a specific unit:
+Casting a float to a distance in some unit:
 
 ```
-d0 := float64(15.3) // nautical miles
-d := units.Distance(d0) * units.NauticalMile
+d0 := float64(15.3) // let's say this is nautical miles
+d := units.NM(d0)
 ```
+
+Print a distance:
+
+d := units.Km(25)
+fmt.Printf("%v", d) // prints "25.00 km"
+fmt.Printf("%v", d.Metre()) // prints "25000.00 km"
+fmt.Printf("%.0f %s", d, d.Short()) // prints "25 km"
 
 ### Speed:
 
@@ -47,16 +54,16 @@ import (
 
 ...
 
-s := 15 * units.Kn
-kms := d.Kphs()
+s := units.Knot(15)
+kphs := s.Kph()
 
 ```
 
-Using a variable that stores a speed in a specific unit:
+Casting a float to a Speed unit:
 
 ```
-s0 := float64(15.3) // knots
-s := units.Speed(d0) * units.Knot
+s0 := float64(15.3) // assuming this is in knots
+s := units.Knot(d0)
 ```
 
 Using the parser:
@@ -67,3 +74,9 @@ if err != nil {
        return err
 }
 ```
+
+Print a speed:
+
+s := units.Mps(25.1234)
+fmt.Printf("%v", s) // prints "25.12 m/s"
+fmt.Printf("%.0f %s", s, s.Short()) // prints "25 m/s"
